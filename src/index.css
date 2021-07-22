@@ -36,3 +36,23 @@ code {
 .header .active {
   color: #131a76;
 }
+tbody {
+  text-align: center;
+  margin: 10px auto;
+}
+thead {
+  text-align: center;
+  margin: 10px auto;
+}
+table {
+  border: 1px solid black;
+  margin: 10px auto;
+}
+td {
+  border: 1px solid black;
+  padding: 10px;
+}
+th {
+  border: 1px solid black;
+  padding: 10px;
+}

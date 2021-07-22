@@ -4,6 +4,7 @@ import axios from "axios";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
 import Home from "./components/Home";
+import Form from "./components/form";
 import PrivateRoute from "./utils/PrivateRoute";
 import PublicRoute from "./utils/PublicRoute";
 import { getToken, removeUserSession, setUserSession } from "./utils/Common";
@@ -11,25 +12,36 @@ import { getToken, removeUserSession, setUserSession } from "./utils/Common";
 const App = () => {
   const [authLoading, setAuthLoading] = useState(true);
 
-  const verifyToken = async (token) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:4000/verifyToken?token=${token}`
-      );
-      setUserSession(response.data.token);
-      setAuthLoading(false);
-    } catch (error) {
-      removeUserSession();
-      setAuthLoading(false);
-    }
-  };
+  // const verifyToken = async (token) => {
+  //   try {
+  //     const response = await axios.get(
+  //       `http://localhost:5000/verifyToken?token=${token}`
+  //     );
+  //     console.log(response, "response");
+  //     setUserSession(response.data.token);
+  //     setAuthLoading(false);
+  //   } catch (error) {
+  //     removeUserSession();
+  //     setAuthLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     const token = getToken();
     if (!token) {
       return;
     }
-    verifyToken(token);
+
+    axios
+      .get(`http://localhost:5000/verifyToken?token=${token}`)
+      .then((response) => {
+        setUserSession(response.data.token, response.data.user);
+        setAuthLoading(false);
+      })
+      .catch((error) => {
+        removeUserSession();
+        setAuthLoading(false);
+      });
   }, []);
 
   if (authLoading && getToken()) {
@@ -56,6 +68,7 @@ const App = () => {
               <Route exact path="/" component={Home} />
               <PublicRoute path="/login" component={Login} />
               <PrivateRoute path="/dashboard" component={Dashboard} />
+              <PrivateRoute exact path="/form/:id?" component={Form} />
             </Switch>
           </div>
         </div>
