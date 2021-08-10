@@ -15,7 +15,7 @@ const App = () => {
   // const verifyToken = async (token) => {
   //   try {
   //     const response = await axios.get(
-  //       `http://localhost:5000/verifyToken?token=${token}`
+  //       `http://localhost:8000/verifyToken?token=${token}`
   //     );
   //     console.log(response, "response");
   //     setUserSession(response.data.token);
@@ -33,7 +33,7 @@ const App = () => {
     }
 
     axios
-      .get(`http://localhost:5000/verifyToken?token=${token}`)
+      .get(`http://localhost:4000/verifyToken?token=${token}`)
       .then((response) => {
         setUserSession(response.data.token, response.data.user);
         setAuthLoading(false);

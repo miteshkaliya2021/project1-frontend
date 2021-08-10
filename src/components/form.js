@@ -5,12 +5,11 @@ const Form = (props) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState(null);
-
-  console.log(props.match.params.id, "id");
+  const [file, setFile] = React.useState("");
 
   const fetchUser = async (id) => {
     try {
-      const user = await axios(`http://localhost:5000/user/${id}`);
+      const user = await axios(`http://localhost:4000/user/${id}`);
       console.log(user.data);
       setEmail(user.data.email);
       setName(user.data.name);
@@ -25,12 +24,24 @@ const Form = (props) => {
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/create-user", {
-        name: name,
-        email: email,
-      });
+      // const formData = new FormData(file);
+      // formData.append("profileImg", file);
+      const response = await axios.post(
+        "http://localhost:4000/create-user",
+
+        {
+          name: name,
+          email: email,
+          // profileImg: formData,
+        }
+      );
       console.log(response, "response");
       props.history.push("/dashboard");
+      // axios
+      //   .post("http://localhost:8000/user-profile", formData, {})
+      //   .then((res) => {
+      //     console.log(res);
+      //   });
     } catch (error) {
       if (error.response.status === 401) setError(error.response.data.message);
       else setError("Something went wrong. Please try again later.");
@@ -39,7 +50,7 @@ const Form = (props) => {
 
   const handleUpdate = async (id) => {
     try {
-      await axios.put(`http://localhost:5000/user/${id}`, {
+      await axios.put(`http://localhost:4000/user/${id}`, {
         name: name,
         email: email,
       });
@@ -49,6 +60,24 @@ const Form = (props) => {
       else setError("Something went wrong. Please try again later.");
     }
   };
+
+  const ImageThumb = ({ image }) => {
+    return <img src={URL.createObjectURL(image)} alt={image.name} />;
+  };
+  const handleFile = (event) => {
+    setFile(event.target.files[0]);
+  };
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("profileImg", file);
+    axios
+      .post("http://localhost:4000/user-profile", formData, {})
+      .then((res) => {
+        console.log(res);
+      });
+  };
+
   return (
     <div>
       {props.match.params.id ? <h3>Edit Person</h3> : <h3>Add Person</h3>}
@@ -70,6 +99,19 @@ const Form = (props) => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+      </div>
+      <br />
+      <div>
+        Upload Profile Pic
+        <br />
+        <input type="file" onChange={handleFile} />
+        <p>Filename: {file.name}</p>
+        <p>File type: {file.type}</p>
+        <p>File size: {file.size} bytes</p>
+        {file && <ImageThumb image={file} />}
+        <button type="submit" onClick={handleUpload}>
+          Upload
+        </button>
       </div>
       <div>
         <br />
